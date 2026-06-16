@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>I'm Sorry, Juhuuuuu 💔</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', sans-serif;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .hearts-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .heart-particle {
+      position: absolute;
+      bottom: -50px;
+      font-size: 1.5rem;
+      animation: floatUp linear infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+      100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255, 255, 255, 0.07);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 24px;
+      padding: 60px 50px;
+      max-width: 520px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .big-heart {
+      font-size: 5rem;
+      display: inline-block;
+      animation: heartbeat 1.4s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      14%       { transform: scale(1.2); }
+      28%       { transform: scale(1); }
+      42%       { transform: scale(1.15); }
+      56%       { transform: scale(1); }
+    }
+
+    h1 {
+      margin-top: 20px;
+      font-size: 2.6rem;
+      color: #fff;
+      letter-spacing: 1px;
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, #f7971e, #ffd200, #f7971e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .message {
+      margin-top: 24px;
+      color: rgba(255,255,255,0.82);
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+
+    .reasons {
+      margin: 30px 0;
+      text-align: left;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .reasons li {
+      background: rgba(255,255,255,0.06);
+      border-left: 3px solid #f7971e;
+      border-radius: 8px;
+      padding: 10px 16px;
+      color: rgba(255,255,255,0.85);
+      font-size: 0.97rem;
+    }
+
+    .promise {
+      margin-top: 10px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.95rem;
+      font-style: italic;
+    }
+
+    .btn {
+      margin-top: 32px;
+      display: inline-block;
+      padding: 14px 40px;
+      background: linear-gradient(135deg, #f7971e, #ffd200);
+      color: #1a1a2e;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 20px rgba(247,151,30,0.35);
+    }
+
+    .btn:hover {
+      transform: scale(1.06);
+      box-shadow: 0 10px 28px rgba(247,151,30,0.5);
+    }
+
+    .footer {
+      margin-top: 30px;
+      color: rgba(255,255,255,0.35);
+      font-size: 0.8rem;
+    }
+
+    /* Response modal */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: #16213e;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 40px 36px;
+      max-width: 360px;
+      width: 88%;
+      text-align: center;
+      color: #fff;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .modal h2 { font-size: 2rem; margin-bottom: 12px; }
+    .modal p  { color: rgba(255,255,255,0.75); line-height: 1.7; }
+
+    .modal-btn {
+      margin-top: 24px;
+      padding: 11px 32px;
+      background: linear-gradient(135deg, #f7971e, #ffd200);
+      color: #1a1a2e;
+      font-weight: 700;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .modal-step { display: none; }
+    .modal-step.active { display: block; animation: fadeIn 0.4s ease; }
+
+    .sad-btns {
+      margin-top: 24px;
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-yes {
+      padding: 11px 30px;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-weight: 700;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+    .btn-yes:hover { background: rgba(255,255,255,0.2); }
+
+    .btn-no {
+      padding: 11px 30px;
+      background: linear-gradient(135deg, #f7971e, #ffd200);
+      color: #1a1a2e;
+      font-weight: 700;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: transform 0.2s;
+    }
+    .btn-no:hover { transform: scale(1.06); }
+  </style>
+</head>
+<body>
+
+  <!-- Floating hearts background -->
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <div class="card">
+    <div class="big-heart">💗</div>
+    <h1>I'm Sorry,<br/><span>Juhuuuuu</span></h1>
+
+    <p class="message">
+      Okay okay okay… I admit it. I sent those reels. 😬<br/>
+      In my defence — short people are scientifically proven to be the most adorable.<br/>
+      But still, I'm sorry, Juhuuuuu. 🙈
+    </p>
+
+    <ul class="reasons">
+      <li>😔 I'm sorry for sending those height reels.</li>
+      <li>📱 I'm sorry for thinking it was funny (it was a little funny, but still — sorry).</li>
+      <li>👑 You are perfectly pocket-sized and absolutely perfect.</li>
+      <li>💛 Good things come in small packages, and you're the best thing.</li>
+    </ul>
+
+    <p class="promise">
+      I promise to only send you cute reels from now on. No more height jokes. 🤞
+    </p>
+
+    <button class="btn" onclick="accept()">I Accept Your Apology 💛</button>
+
+    <p class="footer">Made with love &amp; regret, just for you.</p>
+  </div>
+
+  <!-- Modal -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+
+      <!-- Step 1: Are you still sad? -->
+      <div class="modal-step active" id="step1">
+        <h2>🥺</h2>
+        <p style="font-size:1.3rem; font-weight:700; color:#fff; margin-bottom:8px;">Are you still sad?</p>
+        <p>Be honest with me… 👀</p>
+        <div class="sad-btns">
+          <button class="btn-yes" onclick="recordAndStep('stillSad','Yes 😢','step-yes')">Yes 😢</button>
+          <button class="btn-no"  onclick="recordAndStep('stillSad','No 😊','step-no')">No 😊</button>
+        </div>
+      </div>
+
+      <!-- Step 2a: Still sad :( -->
+      <div class="modal-step" id="step-yes">
+        <h2>😭</h2>
+        <p style="font-size:1.15rem; font-weight:700; color:#fff; margin-bottom:10px;">Nooo don't be sad!!</p>
+        <p>Okay I really truly deeply madly sorry. Those reels were dumb. You are the most perfectly-heighted, most wonderful person and I am a clown. 🤡</p>
+        <p style="margin-top:10px;">Please smile. For me. Just a tiny one. 🥺</p>
+        <div class="sad-btns">
+          <button class="btn-no" onclick="recordAndStep('smiled','Yes she smiled!','step-smiled')">Okay fine, I smiled 😤😊</button>
+        </div>
+      </div>
+
+      <!-- Step 2b: Not sad :D -->
+      <div class="modal-step" id="step-no">
+        <h2>🥳</h2>
+        <p style="font-size:1.15rem; font-weight:700; color:#fff; margin-bottom:10px;">YAY!! That's all I needed!</p>
+        <p>Height is just a number and yours is the perfect number. No more height reels, pinky promise. 🌸💛</p>
+        <button class="modal-btn" onclick="closeModal()">Aww okay 💕</button>
+      </div>
+
+      <!-- Step 3: After smile -->
+      <div class="modal-step" id="step-smiled">
+        <h2>🌟</h2>
+        <p style="font-size:1.15rem; font-weight:700; color:#fff; margin-bottom:10px;">That smile just made my whole day.</p>
+        <p>You're forgiven-worthy of being forgiven, not me. You're too good for this world. 💛 No more reels, I promise!</p>
+        <button class="modal-btn" onclick="closeModal()">All good now 💕</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Generate floating heart particles
+    const bg = document.getElementById('heartsBg');
+    const emojis = ['💗','💛','🌸','✨','💖','🌷','💝'];
+
+    for (let i = 0; i < 28; i++) {
+      const el = document.createElement('span');
+      el.classList.add('heart-particle');
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 100 + 'vw';
+      el.style.fontSize = (1 + Math.random() * 1.5) + 'rem';
+      el.style.animationDuration = (6 + Math.random() * 10) + 's';
+      el.style.animationDelay = (Math.random() * 10) + 's';
+      bg.appendChild(el);
+    }
+
+    // ── Formspree config ──────────────────────────────────────────
+    // 1. Go to https://formspree.io  →  Sign up free
+    // 2. Click "New Form", name it anything, set email to ankurjai142@gmail.com
+    // 3. Copy the form ID (looks like: xpzgkdoe) and paste below
+    const FORMSPREE_ID = 'https://formspree.io/f/xkoaevgj'; // <-- replace this
+    // ─────────────────────────────────────────────────────────────
+
+    const responses = {
+      acceptedApology: false,
+      stillSad: '',
+      smiled: '',
+    };
+
+    function recordAndStep(key, value, nextStep) {
+      responses[key] = value;
+      showStep(nextStep);
+    }
+
+    function accept() {
+      responses.acceptedApology = true;
+      showStep('step1');
+      document.getElementById('overlay').classList.add('show');
+    }
+
+    function showStep(id) {
+      document.querySelectorAll('.modal-step').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    async function closeModal() {
+      // Send responses to Formspree
+      if (FORMSPREE_ID !== 'YOUR_FORM_ID') {
+        try {
+          await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+              'Accepted Apology': responses.acceptedApology ? 'Yes ✅' : 'No ❌',
+              'Still Sad?': responses.stillSad || 'Did not answer',
+              'Smiled?': responses.smiled || 'N/A',
+              '_subject': 'Juhuuuuu responded to your sorry page! 💛',
+            })
+          });
+        } catch(e) { /* silent fail */ }
+      }
+      document.getElementById('overlay').classList.remove('show');
+      setTimeout(() => showStep('step1'), 400);
+    }
+  </script>
+</body>
+</html>
