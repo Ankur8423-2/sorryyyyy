@@ -280,7 +280,7 @@
       <div class="modal-step" id="step-yes">
         <h2>😭</h2>
         <p style="font-size:1.15rem; font-weight:700; color:#fff; margin-bottom:10px;">Nooo don't be sad!!</p>
-        <p>Okay I really truly deeply madly sorry. Those reels were dumb. You are the most perfectly-heighted, most wonderful person and I am a clown. 🤡</p>
+        <p>Okay I really truly deeply madly sorry. Those reels were dumb. You are the most perfectly-heighted, most wonderful person.</p>
         <p style="margin-top:10px;">Please smile. For me. Just a tiny one. 🥺</p>
         <div class="sad-btns">
           <button class="btn-no" onclick="recordAndStep('smiled','Yes she smiled!','step-smiled')">Okay fine, I smiled 😤😊</button>
@@ -322,12 +322,7 @@
       bg.appendChild(el);
     }
 
-    // ── Formspree config ──────────────────────────────────────────
-    // 1. Go to https://formspree.io  →  Sign up free
-    // 2. Click "New Form", name it anything, set email to ankurjai142@gmail.com
-    // 3. Copy the form ID (looks like: xpzgkdoe) and paste below
-    const FORMSPREE_ID = 'https://formspree.io/f/xkoaevgj'; // <-- replace this
-    // ─────────────────────────────────────────────────────────────
+    const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xkoaevgj';
 
     const responses = {
       acceptedApology: false,
@@ -353,9 +348,9 @@
 
     async function closeModal() {
       // Send responses to Formspree
-      if (FORMSPREE_ID !== 'YOUR_FORM_ID') {
+      if (FORMSPREE_ENDPOINT) {
         try {
-          await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+          await fetch(FORMSPREE_ENDPOINT, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
             body: JSON.stringify({
@@ -363,6 +358,7 @@
               'Still Sad?': responses.stillSad || 'Did not answer',
               'Smiled?': responses.smiled || 'N/A',
               '_subject': 'Juhuuuuu responded to your sorry page! 💛',
+              'email': 'no-reply@example.com',
             })
           });
         } catch(e) { /* silent fail */ }
