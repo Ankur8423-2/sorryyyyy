@@ -230,6 +230,94 @@
       transition: transform 0.2s;
     }
     .btn-no:hover { transform: scale(1.06); }
+
+    /* ── Slide-up sorry overlay ── */
+    .sorry-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: linear-gradient(160deg, #1a1a2e, #0f3460, #1a1a2e);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+      transform: translateY(100%);
+      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      overflow: hidden;
+    }
+
+    .sorry-overlay.show {
+      transform: translateY(0);
+    }
+
+    .sorry-title {
+      font-size: clamp(2.2rem, 10vw, 5.5rem);
+      font-weight: 900;
+      letter-spacing: 4px;
+      background: linear-gradient(90deg, #f7971e, #ffd200, #ff6b9d, #f7971e);
+      background-size: 300% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradientShift 2.5s linear infinite;
+      margin-bottom: 14px;
+    }
+
+    @keyframes gradientShift {
+      0%   { background-position: 0% center; }
+      100% { background-position: 300% center; }
+    }
+
+    @keyframes wobble {
+      0%, 100% { transform: rotate(-2deg) scale(1); }
+      50%       { transform: rotate(2deg) scale(1.05); }
+    }
+
+    .sorry-emojis {
+      font-size: clamp(1.6rem, 5vw, 3rem);
+      line-height: 1.7;
+      max-width: 700px;
+    }
+
+    .sorry-words {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 860px;
+    }
+
+    .sorry-word {
+      font-size: clamp(1rem, 3vw, 1.7rem);
+      font-weight: 800;
+      color: rgba(255,255,255,0.9);
+      text-shadow: 0 0 18px rgba(247,151,30,0.5);
+      opacity: 0;
+      transform: translateY(40px);
+      animation: wordRise 0.5s ease forwards;
+    }
+
+    @keyframes wordRise {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sorry-close {
+      margin-top: 36px;
+      padding: 12px 38px;
+      background: linear-gradient(135deg, #f7971e, #ffd200);
+      color: #1a1a2e;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(247,151,30,0.4);
+      transition: transform 0.2s;
+    }
+    .sorry-close:hover { transform: scale(1.06); }
   </style>
 </head>
 <body>
@@ -261,6 +349,14 @@
     <button class="btn" onclick="accept()">I Accept Your Apology 💛</button>
 
     <p class="footer">Made with love &amp; regret, just for you.</p>
+  </div>
+
+  <!-- Slide-up full-screen SORRY overlay -->
+  <div class="sorry-overlay" id="sorryOverlay">
+    <div class="sorry-title">SORRYYYYYYY 😭😭😭</div>
+    <div class="sorry-emojis">😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭😭</div>
+    <div class="sorry-words" id="sorryWords"></div>
+    <button class="sorry-close" onclick="closeSorry()">Okay I forgive you 💛</button>
   </div>
 
   <!-- Modal -->
@@ -348,6 +444,40 @@
       document.getElementById(id).classList.add('active');
     }
 
+    // ── Sorry screen ──────────────────────────────────────────────
+    const sorryPhrases = [
+      'Sorry 😭','Sorryyy 😭','SORRYYY 😭','I\'m so sorry 😭',
+      'Forgive me 😢','Plsss 😭','I messed up 😭','Sorry sorry 😭',
+      'Sorryyyyyyy 😭','I\'m the worst 😭','Pls forgive 😭','SORRYYYY 😭',
+      'I\'m crying 😭','So so sorry 😭','Sorrrryyy 😭','Forgive me pls 😭',
+      'I regret 😭','Never again 😭','I promise 😭','I love u 💛',
+      'Don\'t be mad 😭','Juhuuuuu pls 😭','SORRY 😭','My bad 😭','I\'m sorry ok 😭',
+    ];
+
+    const wordsContainer = document.getElementById('sorryWords');
+    sorryPhrases.forEach((phrase, i) => {
+      const span = document.createElement('span');
+      span.className = 'sorry-word';
+      span.textContent = phrase;
+      wordsContainer.appendChild(span);
+    });
+
+    function showSorry() {
+      // Re-trigger animations by replacing each span with a fresh clone
+      const container = document.getElementById('sorryWords');
+      Array.from(container.querySelectorAll('.sorry-word')).forEach((w, i) => {
+        const clone = w.cloneNode(true);
+        clone.style.animationDelay = `${0.3 + i * 0.07}s`;
+        w.replaceWith(clone);
+      });
+      document.getElementById('sorryOverlay').classList.add('show');
+    }
+
+    function closeSorry() {
+      document.getElementById('sorryOverlay').classList.remove('show');
+    }
+    // ─────────────────────────────────────────────────────────────
+
     async function closeModal() {
       // Send responses to Formspree
       if (FORMSPREE_ENDPOINT) {
@@ -366,7 +496,10 @@
         } catch(e) { /* silent fail */ }
       }
       document.getElementById('overlay').classList.remove('show');
-      setTimeout(() => showStep('step1'), 400);
+      setTimeout(() => {
+        showStep('step1');
+        showSorry();
+      }, 300);
     }
   </script>
 </body>
